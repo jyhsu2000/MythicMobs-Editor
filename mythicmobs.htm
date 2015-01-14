@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>MythicMobs Editor</title>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+    <script src="js/initialize.js"></script>
+    <script src="js/itemController.js"></script>
+
+    <!-- JavaScript -->
+    <script src="js/tabPanel.js"></script>
+
+    <!-- colorpicker -->
+    <script src="colorpicker/bootstrap-colorpicker-module.min.js"></script>
+    <link rel="stylesheet" href="colorpicker/colorpicker.min.css">
+
+    <!-- stylesheet -->
+    <link rel="stylesheet" href="css/stylesheet.css">
+</head>
+<body>
+    <div class="container">
+        <div class="panel panel-default">
+            <!-- 標題 -->
+            <div class="panel-heading">
+                <h3 class="panel-title">MythicMobs Editor</h3>
+            </div>
+            <!-- 頁籤 -->
+            <ul class="nav nav-tabs" id="panelTab">
+                <li role="presentation" class="active"><a href="#item" role="tab" data-toggle="tab">物品</a></li>
+                <li role="presentation"><a href="#mob" role="tab" data-toggle="tab">生物</a></li>
+            </ul>
+            <!-- 內容 -->
+            <div class="panel-body tab-content">
+                <!-- 物品 -->
+                <div class="tab-pane active" ng-controller="itemController" id="item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- 輸入 -->
+                            <form class="form-horizontal">
+                                <!-- 物品名稱 -->
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">物品名稱</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" placeholder="物品名稱" ng-model="itemName">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <select class="form-control" ng-model="itemColor" ng-style="selectorColor">
+                                            <option value="" style="color:black;background:white">-- 顏色 --</option>
+                                            <option value="{{ code }}" style="color:{{ color.font }};background: {{ color.color }}" ng-repeat="(code,color) in colorList">{{ code }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- 物品ID、Data -->
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">物品</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" placeholder="物品ID" ng-model="itemID">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" placeholder="物品Data" ng-model="itemData">
+                                    </div>
+                                </div>
+                                <!-- 說明文字 -->
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">說明文字</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" placeholder="說明文字（最多9行）" ng-model="itemLore" rows=9></textarea>
+                                    </div>
+                                </div>
+                                <hr />
+                                <!-- 附魔 -->
+                                <div class="form-group" ng-repeat="ench in enchList">
+                                    <div class="col-sm-5">
+                                        <select class="form-control" ng-model="enchList[$index].selected" ng-options="ench.name as ench.showName for ench in enchData">
+                                            <option value="">-- 附魔 --</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-7">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="附魔等級" ng-model="enchList[$index].lvl">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-danger btn-add" type="button" ng-click="removeEnch($index)">
+                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="pull-right">
+                                            <input type="button" class="btn btn-primary" value="新增附魔" ng-click="addEnch()">
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <!-- 物品設定 -->
+                                <div class="form-group">
+                                    <label class="col-sm-3">傷害增加</label>
+                                    <label class="col-sm-3">血量增加</label>
+                                    <label class="col-sm-3">擊退抵抗</label>
+                                    <label class="col-sm-3">移動加速</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" placeholder="傷害增加" ng-model="option.Damage">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" placeholder="血量增加" ng-model="option.Health">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" placeholder="擊退抵抗" ng-model="option.KnockbackResistance">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" placeholder="移動加速" ng-model="option.MovementSpeed">
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="itemID==298||itemID==299||itemID==300||itemID==301">
+                                    <label class="col-sm-2 control-label">皮革顏色</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" placeholder="皮革顏色，Red,Green,Blue (0-255)" ng-model="option.Color" colorpicker="rgb" colorpicker-position="top" colorpicker-with-input="true">
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="itemID==397&&itemData==3">
+                                    <label class="col-sm-2 control-label">頭顱ID</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" placeholder="頭顱ID" ng-model="option.Player">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- 輸出 -->
+                            <textarea name="output" id="output" class="form-control" rows="30" placeholder="設定檔內容（請先輸入物品名稱）" onclick="this.focus();this.select()" readonly>{{ output }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <!-- 生物 -->
+                <div class="tab-pane" id="mob">
+                    Coming Soon...
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
