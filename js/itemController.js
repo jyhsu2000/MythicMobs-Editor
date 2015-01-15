@@ -160,7 +160,7 @@ function update($scope){
             }
         }
         angular.forEach($scope.option, function(value, key){
-            if((key && key != "Color" && $.isNumeric(value)) || (key == "Player" && $scope.itemID == 397 && $scope.itemData == 3) || (key == "Color" && valueIsColor && $.inArray($scope.itemID,["298","299","300","301"]) != -1)){
+            if((key && $.inArray(key,["Color","Player"]) == -1 && $.isNumeric(value)) || (key == "Player" && $scope.itemID == 397 && $scope.itemData == 3) || (key == "Color" && valueIsColor && $.inArray($scope.itemID,["298","299","300","301"]) != -1)){
                 countOption += 1;
             }
         });
@@ -168,10 +168,19 @@ function update($scope){
         if(countOption > 0){
             $scope.output += "  Options:\n";
             angular.forEach($scope.option, function(value, key){
-                if((key && $.isNumeric(value) && $.inArray(key,["Color","Player"]) == -1) || (key == "Player" && $scope.itemID == 397 && $scope.itemData == 3)){
+                if(key == "Color"){
+                    //Color
+                    if(valueIsColor && $.inArray($scope.itemID,["298","299","300","301"]) != -1){
+                        $scope.output += "    " + key + ": " + color + "\n";
+                    }
+                }else if(key == "Player"){
+                    //Player
+                    if($scope.itemID == 397 && $scope.itemData == 3){
+                        $scope.output += "    " + key + ": " + value + "\n";
+                    }
+                }else if(key && $.isNumeric(value)){
+                    //Other
                     $scope.output += "    " + key + ": " + value + "\n";
-                }else if(key == "Color" && valueIsColor && $.inArray($scope.itemID,["298","299","300","301"]) != -1){
-                    $scope.output += "    " + key + ": " + color + "\n";
                 }
             });
         }
